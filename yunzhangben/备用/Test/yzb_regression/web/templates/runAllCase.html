@@ -1,0 +1,27 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}云账本接口回归测试平台{% endblock title %}
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+{% block content -%}
+<form role="form">
+  <div class="form-group">
+    <span>请选择项目</span>
+    <select class="form-control">
+      <option>云账本</option>
+      <option>云库房</option>
+      <option>YouTime</option>
+      
+    </select>
+  </div>
+  <div class="form-group">
+    <span>请选择环境</span>
+    <select class="form-control">
+      <option>测试环境</option>
+      <option>预发布环境</option>
+      <option>灰度环境</option>
+      <option>正式环境</option>
+    </select>
+  </div>
+  
+</form>
+{%- endblock content %}
