@@ -96,6 +96,7 @@ class ZFAclassTestCase:
         print("runCase")
         self.api_host_obj = api_host_obj
         headers = json.loads(case.get("headers"))
+        headers["device-tokens"] = "AvmIKnZ8c_tSlnOiJWiGgn-"+str(int(time.time()))
         request_data = json.loads(case.get("request_data"))
         if 'timestamp' in request_data:
             request_data['timestamp'] = str(int(time.time()))
@@ -150,13 +151,18 @@ class ZFAclassTestCase:
                                 field_value = result[field_names[key]]
                                 request_data[key] = str(field_value)
                 elif pre_field["scope"] == "variable":
+                    field_names = pre_field["field"]
                     for data in request_data:
-                        field_names = pre_field["field"]
-                        for key in field_names:
-                            if data == key:
-                                field_value = result[field_names[key]]
-                                passport = re.search("passport=(.*)", str(field_value)).group(1)
-                                request_data[key] = passport
+                        if field_names == "url":  
+                            field_value = result[field_names]
+                            passport = re.search("passport=(.*)", str(field_value)).group(1)
+                            request_data[key] = passport
+                        if field_names == "detail":  
+                            field_value = result[field_names]
+                            goods_id = re.search("goods_id=(.*)&passport=(.*)", str(field_value)).group(1)
+                            passport = re.search("goods_id=(.*)&passport=(.*)", str(field_value)).group(2)
+                            request_data["goods_id"] = goods_id
+                            request_data["passport"] = passport
         if "access_token" in request_data and request_data.get("access_token") == "":
             request_data['access_token'] = self.access_token
         req = RequestUtil()
@@ -197,8 +203,9 @@ class ZFAclassTestCase:
         for code in expect_result: #判断业务状态码
             if code == json_response.get("status") or str(code) == json_response.get("status"):
                 mark = True
+                is_pass = True
                 break
-        if mark:
+        if mark and res_data:
             if assert_type == "status":
                 if res_data.get("access_token"):
                     self.access_token = res_data.get("access_token")

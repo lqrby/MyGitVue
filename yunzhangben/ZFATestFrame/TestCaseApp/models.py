@@ -53,6 +53,7 @@ class Case(models.Model):
         ('data_list', 'data_list'),
         ('data_array', 'data_array'),
         ('data_item', 'data_item'),
+        ('data_rotate', 'data_rotate'),
     )
     assert_type = models.CharField('断言类型', choices=assert_choices, max_length=32 )
     pass_choices = (
@@ -81,7 +82,7 @@ class Config(models.Model):
     """
     # 配置
     """
-    name = models.CharField('所属app',max_length=30)
+    name = models.ForeignKey(AppName, on_delete=models.CASCADE, verbose_name='所属app', blank=False, null=True)
     dict_key = models.CharField('字典key',max_length=32)
     dict_value = models.CharField('字典值',max_length=256)
     api_key = models.CharField('apikey',max_length=255, default="null",blank=True, null=True)

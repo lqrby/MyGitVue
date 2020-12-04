@@ -6,6 +6,8 @@ from django.contrib.admin.helpers import ActionForm
 import sys
 sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunzhangben/yzb_regression")
 from case.class_api_test import ZFAclassTestCase
+sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunkufang/ykf_regression")
+from case.ykf_api_test import ClassTestCase_yzb
 
 # admin.site.register(models.UserInfo)
 #UserInfo模型的管理器（自定制显示内容类）
@@ -57,14 +59,23 @@ class CaseAdmin(admin.ModelAdmin):
     set_run_no.short_description = '设置运行为:no'
 
     #批量运行
-    def run_batch(self, request, queryset):
+    def run_batch_yzb(self, request, queryset):
         # queryset.update(run='yes')
         #测试环境:yzb_test_host
         
         app_name, host_key = "云账本", "yzb_test_host"
         ZFAclassTestCase().runAllCase(app_name, host_key)
-    run_batch.short_description = '批量运行'
-    actions = (set_run_yes,set_run_no,run_batch) #指定自定义actions
+    run_batch_yzb.short_description = '云账本批量运行'
+
+    #批量运行
+    def run_batch_ykf(self, request, queryset):
+        # queryset.update(run='yes')
+        #测试环境:yzb_test_host
+        
+        app_name, host_key = "云库房", "ykf_test_host"
+        ClassTestCase_yzb().runAllCase(app_name, host_key)
+    run_batch_ykf.short_description = '云库房批量运行'
+    actions = (set_run_yes,set_run_no,run_batch_yzb,run_batch_ykf) #指定自定义actions
 
 
 
