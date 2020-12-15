@@ -4,6 +4,7 @@ import base64
 import sys
 import queue
 from requests_toolbelt import MultipartEncoder
+
 sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunzhangben/yzb_pressure")
 from common.userAgent import UserAgent
 from case.class_api_test import ZFAclassTestCase
@@ -17,20 +18,21 @@ class YunQianBaoMan(TaskSet):
             "Connection":"keep-alive",
             "app-type":"android", #android
             "mobile-unid":str(int(time.time() * 100000)),
-            "app-version":"5.5.4.1",
+            "app-version":"5.4.91",
             "mobile-type":"HUAWEIALP-TL00(8.0.0)",
             "mobile-system":"android8.0.0",
-            "device-tokens": "AkWsVNSPMcwhC6nAXITHbPyrv0YgG5nt1T0B8n79-"+str(int(time.time() * 1000)),  #
-            "User-Agent": random.choice(UserAgent().random_userAgent()) #"Dalvik/2.1.0 (Linux; U; Android 8.0.0; ALP-TL00 Build/HUAWEIALP-TL00)",
+            "device-tokens":"AkWsVNSPMcwhC6nAXITHbPyrv0YgG5nt1T0B8n79-"+str(int(time.time() * 1000)),  #
+            "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 8.0.0; ALP-TL00 Build/HUAWEIALP-TL00)", #random.choice(UserAgent().random_userAgent()) 
         }
-        
         
         self.loginData = ""
         self.last_response = {}
         self.ctc = ZFAclassTestCase(self)
         app_name = "云账本"
         host_key = "yzb_test_host"
+        # host_key = "yzb_release_host"
         self.api_host_obj = self.ctc.loadConfigByAppAndKey(app_name,host_key)
+        print("self.api_host_obj==",self.api_host_obj)
         #获取接口的域名https://tyqbapi.pmm2020.com            return{'id': 1, 'name': '云账本', 'dict_key': 'yzb_test_host', 'dict_value': 'https://tyqbapi.pmm2020.com'}
         #根据用例id登录
         case_id = 5
@@ -47,32 +49,43 @@ class YunQianBaoMan(TaskSet):
         except Exception as e:
             print("用例id={0},模块:{1},标题:{2}，执行报错:{3}".format(case["id"],case["module"],case["title"],e))
 
-        caseListId = [79,80,62,111,14,15,16,17,19,11,12,20,22,23,24,25]
-        # caseListId = [15,16,11,12,14]
+        # caseListId = [79,80,62,111,14,15,16,17,19,11,12,20,22,23,24,25]
+        caseListId = [190,191]
         self.caseArr = []
         for case_id in caseListId: #需要执行的所有用例id
             case = self.ctc.findCaseById(case_id)
             self.caseArr.append(case)
-
-
-    @task
-    def userShiMing(self):
-        
-        print("kai shi ")
         #循环执行用例
         for case in self.caseArr:
             try:
                 #执行用例
                 response_text = self.ctc.runCase(case,self.headers,self.last_response, self.api_host_obj, self.loginData)
-                if response_text == 0:
-                    print("用例id-{}-未执行，原因:该用例依赖的前置用例列表为空".format(case["id"]))
-                    continue
                 if response_text:
                     self.last_response = json.loads(response_text)
                 else:
                     print("断言失败:用例id={}--url={}--接口名称={}--响应码={}".format(case["id"], case["url"], case["title"]+case["url"], response_text))
             except Exception as e:
                 print("用例id={0},模块:{1},标题:{2}，执行报错:{3}".format(case["id"],case["module"],case["title"],e))
+
+
+    @task
+    def userShiMing(self):
+        
+        print("kai shi ")
+        # #循环执行用例
+        # for case in self.caseArr:
+        #     try:
+        #         #执行用例
+        #         response_text = self.ctc.runCase(case,self.headers,self.last_response, self.api_host_obj, self.loginData)
+        #         if response_text == 0:
+        #             print("用例id-{}-未执行，原因:该用例依赖的前置用例列表为空".format(case["id"]))
+        #             continue
+        #         if response_text:
+        #             self.last_response = json.loads(response_text)
+        #         else:
+        #             print("断言失败:用例id={}--url={}--接口名称={}--响应码={}".format(case["id"], case["url"], case["title"]+case["url"], response_text))
+        #     except Exception as e:
+        #         print("用例id={0},模块:{1},标题:{2}，执行报错:{3}".format(case["id"],case["module"],case["title"],e))
 
         
         
@@ -85,7 +98,9 @@ class WebsiteUser(HttpUser):
     wait_time = between(1, 3)
     app_name = "云账本"
     host_key = "yzb_test_host"
+    # host_key = "yzb_release_host"
     pz_obj = ZFAclassTestCase(TaskSet).loadConfigByAppAndKey(app_name,host_key)
+    print("pz_obj====",pz_obj)
     host_values = json.loads(pz_obj["dict_value"])
     host = host_values["native_host"]
     # users = queryUsers() #多个用户

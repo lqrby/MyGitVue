@@ -29,6 +29,7 @@ class ZFAclassTestCase(TaskSet):
         my_db = MysqlDb()
         sql = "select * from `testcaseapp_case` where id = '{0}'".format(case_id)
         returns = my_db.query(sql, state="one")
+        # print("returns===",returns)
         return returns
 
 
@@ -36,9 +37,10 @@ class ZFAclassTestCase(TaskSet):
         """
         根据app和key加载配置
         """
-        print("loadConfigByAppAndKey")
+        print("loadConfigByAppAndKey================",app_name,dict_key)
         my_db = MysqlDb()
         sql = "select * from `testcaseapp_config` where name='{0}' and dict_key='{1}'".format(app_name,dict_key)
+        # print("sql===",sql)
         returns = my_db.query(sql, state="one")
         return returns
 
@@ -171,8 +173,6 @@ class ZFAclassTestCase(TaskSet):
                                 request_data[key] = passport
         if "token" in request_data:
             request_data['token'] = loginData["token"]
-        # if 'timestamp' in request_data:
-        #     request_data['timestamp'] = str(int(time.time()))
         if isinstance(api_host_obj,str):
             api_host_obj = json.loads(api_host_obj)
         host_values = json.loads(api_host_obj["dict_value"])
@@ -332,15 +332,12 @@ class ZFAclassTestCase(TaskSet):
         request_data["mobile"] = str(mobile)
         request_data["device_tokens"] = "AvmIKnZ8c_tSlnOiJWiGgn8X6u2vx5Z8"+str(int(time.time() * 1000))
         if isinstance(api_host_obj,str):
-            print("判断str并转换成json")
             api_host_obj = json.loads(api_host_obj)
-        print("case.get(headers)====",case.get("headers"),type(case.get("headers")))
         header = json.loads(case.get("headers"))
-        print("header===",header)
         headers["Content-Type"] = header["Content-Type"]
         method = case["method"]
         req_url = case["url"]
-        
+        print("用户账号:",str(mobile))
         #是否有前置条件
         if case.get("pre_case_id") > -1:
             print("需要前置用例返回值")

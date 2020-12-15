@@ -1,3 +1,10 @@
+'''
+version: V2.0
+Author: 学海无涯任我游
+Date: 2020-11-30 10:46:38
+LastEditors: 学海无涯任我游
+LastEditTime: 2020-12-08 17:28:02
+'''
 import sys
 sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunzhangben/yzb_regression")
 from case.class_api_test import ZFAclassTestCase

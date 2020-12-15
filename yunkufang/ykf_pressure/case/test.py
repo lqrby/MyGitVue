@@ -1,2 +1,10 @@
+'''
+version: V2.0
+Author: 学海无涯任我游
+Date: 2020-12-02 11:22:35
+LastEditors: 学海无涯任我游
+LastEditTime: 2020-12-11 13:26:31
+'''
 
-{ "user-agent":"Mozilla/5.0 (Linux; U; Android 9; zh-cn; ALP-TL00 Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) Ver sion/4.0 Mobile Safari/537.36 YunKuFang/2.0.2", "mobile-system":"android9", "app-version":"2.0.2", "app-version-code":"19", "app-type":"Android", "mobile-unid":"", "mobile-type":"", "Content-Type":"application/x-www-form-urlencoded", "Connection":"keep-alive" }
+a = {"name":"zhangsan"}
+print(a.get("age"))

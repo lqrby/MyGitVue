@@ -6,8 +6,8 @@ from django.contrib.admin.helpers import ActionForm
 import sys
 sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunzhangben/yzb_regression")
 from case.class_api_test import ZFAclassTestCase
-sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunkufang/ykf_regression")
-from case.ykf_api_test import ClassTestCase_yzb
+sys.path.append("E:/myTestFile/TestObject/zhongfuan/")
+from yunkufang.ykf_regression.case.ykf_api_test import ClassTestCase_ykf
 
 # admin.site.register(models.UserInfo)
 #UserInfo模型的管理器（自定制显示内容类）
@@ -73,7 +73,7 @@ class CaseAdmin(admin.ModelAdmin):
         #测试环境:yzb_test_host
         
         app_name, host_key = "云库房", "ykf_test_host"
-        ClassTestCase_yzb().runAllCase(app_name, host_key)
+        ClassTestCase_ykf().runAllCase(app_name, host_key)
     run_batch_ykf.short_description = '云库房批量运行'
     actions = (set_run_yes,set_run_no,run_batch_yzb,run_batch_ykf) #指定自定义actions
 

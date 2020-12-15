@@ -1,10 +1,17 @@
+'''
+version: V2.0
+Author: 学海无涯任我游
+Date: 2020-12-02 11:12:29
+LastEditors: 学海无涯任我游
+LastEditTime: 2020-12-09 10:24:24
+'''
 import sys
 sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunkufang/ykf_regression")
-from case.ykf_api_test import ClassTestCase_yzb
+from case.ykf_api_test import ClassTestCase_ykf
 
 
 if __name__ == "__main__":
-    app = ClassTestCase_yzb()
+    app = ClassTestCase_ykf()
     app.runAllCase("云库房","ykf_test_host")
 
 

@@ -1,3 +1,10 @@
+'''
+version: V2.0
+Author: 学海无涯任我游
+Date: 2020-12-02 11:22:35
+LastEditors: 学海无涯任我游
+LastEditTime: 2020-12-11 11:04:05
+'''
 import sys, pymysql, datetime,json
 from warnings import filterwarnings
 
@@ -34,7 +41,7 @@ class MysqlDb:
         更新、修改、删除
         """
         try:
-            print("sql=======",sql)
+            # print("sql=======",sql)
             #使用execute操作sql
             rows = self.cur.execute(sql)
             #提交事务

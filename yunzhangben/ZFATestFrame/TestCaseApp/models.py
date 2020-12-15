@@ -27,7 +27,11 @@ class Case(models.Model):
     app_name = models.ForeignKey(AppName, on_delete=models.CASCADE, verbose_name='业务应用', blank=False, null=True)
     module = models.CharField('模块名称', max_length=20 )
     title = models.CharField('用例名称', max_length=30 )
-    method = models.CharField('请求方法', max_length=10 )
+    method_choices = (
+        ('post', 'POST'),
+        ('get', 'GET'),
+    )
+    method = models.CharField('请求方法', default='post', max_length=10, choices=method_choices)
     native_choices = (
         (0, 'native'),
         (1, 'api_h5'),

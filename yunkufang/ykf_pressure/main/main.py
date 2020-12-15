@@ -30,7 +30,7 @@ class YunQianBaoMan(TaskSet):
         self.last_response = {}
         self.ctc = ZFAclassTestCase(self)
         app_name = "云库房"
-        host_key = "ykf_test_host"
+        host_key = "ykf_dev_host"
         self.api_host_obj = self.ctc.loadConfigByAppAndKey(app_name,host_key)
         #获取接口的域名https://tyqbapi.pmm2020.com            return{'id': 1, 'name': '云账本', 'dict_key': 'yzb_test_host', 'dict_value': 'https://tyqbapi.pmm2020.com'}
         #根据用例id登录
@@ -48,19 +48,15 @@ class YunQianBaoMan(TaskSet):
         except Exception as e:
             print("用例id={0},模块:{1},标题:{2}，执行报错:{3}".format(case["id"],case["module"],case["title"],e))
 
-        caseListId = [121,122,123]
+        # caseListId = [121,122,123,127] #首页接口
+        # caseListId = [124,129] #首页banner活动抽奖流程
+        caseListId = [124,140] #首页banner活动抽奖流程
         # caseListId = [15,16,11,12,14]
         self.caseArr = []
         for case_id in caseListId: #需要执行的所有用例id
             case = self.ctc.findCaseById(case_id)
             self.caseArr.append(case)
 
-
-    @task
-    def userShiMing(self):
-        
-        print("开始")
-        #循环执行用例
         for case in self.caseArr:
             try:
                 #执行用例
@@ -75,6 +71,26 @@ class YunQianBaoMan(TaskSet):
             except Exception as e:
                 print("用例id={0},模块:{1},标题:{2}，执行报错:{3}".format(case["id"],case["module"],case["title"],e))
 
+
+    @task
+    def userShiMing(self):
+        
+        print("开始")
+        #循环执行用例
+        # for case in self.caseArr:
+        #     try:
+        #         #执行用例
+        #         response_text = self.ctc.runCase(case,self.headers,self.last_response, self.api_host_obj, self.loginData)
+        #         if response_text == 0:
+        #             print("用例id-{}-未执行，原因:该用例依赖的前置用例列表为空".format(case["id"]))
+        #             continue
+        #         if response_text:
+        #             self.last_response = json.loads(response_text)
+        #         else:
+        #             print("断言失败:用例id={}--url={}--接口名称={}--响应码={}".format(case["id"], case["url"], case["title"]+case["url"], response_text))
+        #     except Exception as e:
+        #         print("用例id={0},模块:{1},标题:{2}，执行报错:{3}".format(case["id"],case["module"],case["title"],e))
+
         
         
         
@@ -85,7 +101,8 @@ class WebsiteUser(HttpUser):
     tasks = [YunQianBaoMan]
     wait_time = between(1, 3)
     app_name = "云库房"
-    host_key = "ykf_test_host"
+    # host_key = "ykf_test_host"
+    host_key = "ykf_dev_host"
     pz_obj = ZFAclassTestCase(TaskSet).loadConfigByAppAndKey(app_name,host_key)
     host_values = json.loads(pz_obj["dict_value"])
     host = host_values["native_host"]

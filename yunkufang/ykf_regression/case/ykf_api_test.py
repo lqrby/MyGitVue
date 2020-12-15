@@ -6,7 +6,7 @@ from utils.send_mail import SendMail
 from case.qianMing import GetDataSign
 
 
-class ClassTestCase_yzb:
+class ClassTestCase_ykf:
 
     def __init__(self):
         self.token = ""
@@ -101,8 +101,6 @@ class ClassTestCase_yzb:
         request_data = json.loads(case.get("request_data"))
         method = case["method"]
         req_url = case["url"]
-        
-
         #是否有前置条件
         if case.get("pre_case_id") > -1:
             print("有前置条件")
@@ -121,19 +119,26 @@ class ClassTestCase_yzb:
             json_response = json.loads(pre_response)
             json_data = json_response.get("data")
             result = {}
-
             if assert_type == "status":
                 result = json_data  
-            elif assert_type == "data_array" and len(json_data) > 0:   
+            elif assert_type == "data_array" and len(json_data) >= 0:   
+                if json_data == {} or json_data == [] or json_data == "":
+                    return json_data
                 result = random.choice(json_data)
-            elif assert_type == "data_list" and len(json_data.get("list")) > 0:
+            elif assert_type == "data_list" and len(json_data.get("list")) >= 0:
                 arr_list = json_data.get("list")
+                if arr_list == {} or arr_list == [] or arr_list == "":
+                    return arr_list
                 result = random.choice(arr_list)
-            elif assert_type == "data_item" and len(json_data.get("item")) > 0:
+            elif assert_type == "data_item" and len(json_data.get("item")) >= 0:
                 arr_item = json_data.get("item")
+                if arr_item == {} or arr_item == [] or arr_item == "":
+                    return arr_item
                 result = random.choice(arr_item)
-            elif assert_type == "data_rotate" and len(json_data.get("rotate")) > 0:
+            elif assert_type == "data_rotate" and len(json_data.get("rotate")) >= 0:
                 arr_rotate = json_data.get("rotate")
+                if arr_rotate == {} or arr_rotate == [] or arr_rotate == "":
+                    return arr_rotate
                 result = random.choice(arr_rotate)
             pre_fields = json.loads(case.get("pre_fields"))
             for pre_field in pre_fields:
@@ -183,6 +188,7 @@ class ClassTestCase_yzb:
         req_url = domain_host + case["url"]
         response = req.customRequest(req_url,method,headers=headers,param=request_data)
         return response
+        
 
 
     def assertResponse(self,case,response):
@@ -193,9 +199,11 @@ class ClassTestCase_yzb:
         assert_type = case["assert_type"]
         expect_result = json.loads(case["expect_result"])
         is_pass = False
-        # if not response:
-        #     assert_msg = {'is_pass':is_pass,'msg':response}
-        #     return assert_msg
+        if not response:
+            is_pass = True
+            msg = '模块:{0}, 标题:{1}, 该接口未执行原因:{2}, 前置用例响应值:{3}'.format(case.get("module"), case.get("title"), "前置用例返回值无数据", response)
+            assert_msg = {'is_pass':is_pass,'msg':msg}
+            return assert_msg
         json_response = json.loads(response)
         res_data = json_response.get("data")
 
@@ -203,8 +211,9 @@ class ClassTestCase_yzb:
         for code in expect_result: #判断业务状态码
             if code == json_response.get("status") or str(code) == json_response.get("status"):
                 mark = True
+                is_pass = True
                 break
-        if mark:
+        if mark and res_data:
             if assert_type == "status":
                 if res_data.get("token"):
                     self.token = res_data.get("token")
@@ -213,7 +222,7 @@ class ClassTestCase_yzb:
             # 判断列表数组长度
             elif assert_type == "data_list":
                 data_array = res_data.get("list")
-                if data_array is not None and isinstance(data_array,list) and len(data_array) >= 0:
+                if data_array is not None and len(data_array) >= 0:
                     is_pass = True
                     print("测试用例通过")
                 else:

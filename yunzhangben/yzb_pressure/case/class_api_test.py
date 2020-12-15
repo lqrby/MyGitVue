@@ -1,4 +1,6 @@
-import sys, datetime, json, time, random, re, queue
+import sys, datetime, json, time, random, re, queue, requests,urllib3 
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+urllib3.disable_warnings(InsecureRequestWarning)
 sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunzhangben/yzb_pressure")
 from utils.db_util import MysqlDb
 from utils.locust_request_util import LocustRequestUtil
@@ -8,7 +10,7 @@ from locust import HttpUser,task,TaskSet,between,events
 
 
 class ZFAclassTestCase(TaskSet):
-
+    
     
     def loadAllClassByApp(self,app_name_id):
         """
@@ -122,25 +124,24 @@ class ZFAclassTestCase(TaskSet):
             else:
                 json_data = last_response.get("data")
             result = {}
+            if json_data == {} or json_data == [] or json_data == "":
+                return json_data
             #根据前用例的断言方式确定返回值的格式
             if isinstance(json_data,list):
                 result = random.choice(json_data)
             elif "list" in json_data:
-                if len(json_data.get("list")) > 0:
+                arr_list = json_data.get("list")
+                if len(arr_list) >= 0:
+                    if arr_list == {} or arr_list == [] or arr_list == "":
+                        return arr_list
                     arr_list = json_data.get("list")
                     result = random.choice(arr_list)
-                elif len(json_data.get("list")) == 0:
-                    return 0
-                else:
-                    print("见鬼了")
             elif "item" in json_data:
-                if len(json_data.get("item")) > 0:
-                    arr_item = json_data.get("item")
+                arr_item = json_data.get("item")
+                if len(arr_item) >= 0:
+                    if arr_item == {} or arr_item == [] or arr_item == "":
+                        return arr_item
                     result = random.choice(arr_item)
-                elif len(json_data.get("item")) == 0:
-                    return 0
-                else:
-                    print("见鬼了")
             else:
                 result = json_data
             pre_fields = json.loads(case.get("pre_fields"))
@@ -162,13 +163,18 @@ class ZFAclassTestCase(TaskSet):
                                 field_value = result[field_names[key]]
                                 request_data[key] = str(field_value)
                 elif pre_field["scope"] == "variable":
+                    field_names = pre_field["field"]
                     for data in request_data:
-                        field_names = pre_field["field"]
-                        for key in field_names:
-                            if data == key:
-                                field_value = result[field_names[key]]
-                                passport = re.search("passport=(.*)", str(field_value)).group(1)
-                                request_data[key] = passport
+                        if field_names == "url":  
+                            field_value = result[field_names]
+                            passport = re.search("passport=(.*)", str(field_value)).group(1)
+                            request_data["passport"] = passport
+                        if field_names == "detail":  
+                            field_value = result[field_names]
+                            goods_id = re.search("goods_id=(.*)&passport=(.*)", str(field_value)).group(1)
+                            passport = re.search("goods_id=(.*)&passport=(.*)", str(field_value)).group(2)
+                            request_data["goods_id"] = goods_id
+                            request_data["passport"] = passport
         if "access_token" in request_data:
             request_data['access_token'] = loginData["access_token"]
         if 'timestamp' in request_data:
@@ -176,28 +182,33 @@ class ZFAclassTestCase(TaskSet):
         if isinstance(api_host_obj,str):
             api_host_obj = json.loads(api_host_obj)
         host_values = json.loads(api_host_obj["dict_value"])
+        header = json.loads(case.get("headers"))
+        headers["Content-Type"] = header["Content-Type"]
         if case['domain_type'] == 0:
-            header = json.loads(case.get("headers"))
-            headers["Content-Type"] = header["Content-Type"]
             domain_host = host_values["native_host"]
             sign = GetDataSign().sign_body(req_url, request_data, api_host_obj["api_key"] ) 
             request_data["sign"] = sign
         elif case['domain_type'] == 1:
             domain_host = host_values["api_h5"]
-            headers = json.loads(case.get("headers"))
+            # headers = json.loads(case.get("headers"))
         elif case['domain_type'] == 2:
             domain_host = host_values["quiz_h5"]
-            headers = json.loads(case.get("headers"))
+            # headers = json.loads(case.get("headers"))
+            if 'callback' in request_data:
+                sjs = random.randint(32366041731304676,84866041731304676) 
+                request_data["callback"] = "jQuery11230"+str(sjs)+"_"+str(int(time.time() * 1000))
+            if '_' in request_data:
+                request_data["_"] = str(int(time.time() * 1000))
         elif case['domain_type'] == 3:
             domain_host = host_values["deputy_h5"]
-            headers = json.loads(case.get("headers"))
+            # headers = json.loads(case.get("headers"))
         else:
             print("域名写错了吧")
         req_url = domain_host+case["url"]
         req_urlName = case["title"] + case["url"]
         content_type = headers.get("content-type")
         req = LocustRequestUtil(self)
-        response_text = req.requestMethod(case, req_url, req_urlName, method,headers=headers,param=request_data, content_type=content_type)
+        response_text = req.requestMethod(case, req_url, req_urlName, method, headers=headers, param=request_data, content_type=content_type)
         return response_text
 
 

@@ -124,13 +124,19 @@ class ZFAclassTestCase:
 
             if assert_type == "status":
                 result = json_data  
-            elif assert_type == "data_array" and len(json_data) > 0:   
+            elif assert_type == "data_array" and len(json_data) >= 0: 
+                if json_data == {} or json_data == [] or json_data == "":
+                    return json_data  
                 result = random.choice(json_data)
-            elif assert_type == "data_list" and len(json_data.get("list")) > 0:
+            elif assert_type == "data_list" and len(json_data.get("list")) >= 0:
                 arr_list = json_data.get("list")
+                if arr_list == {} or arr_list == [] or arr_list == "":
+                    return arr_list
                 result = random.choice(arr_list)
-            elif assert_type == "data_item" and len(json_data.get("item")) > 0:
+            elif assert_type == "data_item" and len(json_data.get("item")) >= 0:
                 arr_item = json_data.get("item")
+                if arr_item == {} or arr_item == [] or arr_item == "":
+                    return arr_item
                 result = random.choice(arr_item)
             pre_fields = json.loads(case.get("pre_fields"))
             for pre_field in pre_fields:
@@ -156,7 +162,7 @@ class ZFAclassTestCase:
                         if field_names == "url":  
                             field_value = result[field_names]
                             passport = re.search("passport=(.*)", str(field_value)).group(1)
-                            request_data[key] = passport
+                            request_data["passport"] = passport
                         if field_names == "detail":  
                             field_value = result[field_names]
                             goods_id = re.search("goods_id=(.*)&passport=(.*)", str(field_value)).group(1)
@@ -167,15 +173,20 @@ class ZFAclassTestCase:
             request_data['access_token'] = self.access_token
         req = RequestUtil()
         host_values = json.loads(self.api_host_obj["dict_value"])
+        if "sign" in request_data:
+            sign = GetDataSign().sign_body(req_url, request_data, self.api_host_obj["api_key"] ) 
+            request_data["sign"] = sign
         if case['domain_type'] == 0:
             domain_host = host_values["native_host"]
-            if request_data.get("sign") == "":
-                sign = GetDataSign().sign_body(req_url, request_data, self.api_host_obj["api_key"] ) 
-                request_data["sign"] = sign
         elif case['domain_type'] == 1:
             domain_host = host_values["api_h5"]
         elif case['domain_type'] == 2:
             domain_host = host_values["quiz_h5"]
+            if 'callback' in request_data:
+                sjs = random.randint(32366041731304676,84866041731304676) 
+                request_data["callback"] = "jQuery11230"+str(sjs)+"_"+str(int(time.time() * 1000))
+            if '_' in request_data:
+                request_data["_"] = str(int(time.time() * 1000))
         elif case['domain_type'] == 3:
             domain_host = host_values["deputy_h5"]
         else:
@@ -189,13 +200,19 @@ class ZFAclassTestCase:
         """
         断言响应内容，更新用例执行情况
         """
-        print("assertResponse11111")
+        print("assertResponse")
         assert_type = case["assert_type"]
         expect_result = json.loads(case["expect_result"])
         is_pass = False
-        # if not response:
-        #     assert_msg = {'is_pass':is_pass,'msg':response}
-        #     return assert_msg
+        
+        if not response:
+            is_pass = True
+            msg = '模块:{0}, 标题:{1}, 该接口未执行原因:{2}, 前置用例响应值:{3}'.format(case.get("module"), case.get("title"), "前置用例返回值无数据", response)
+            assert_msg = {'is_pass':is_pass,'msg':msg}
+            return assert_msg
+        if "jQuery1123" in response:
+            zz_response = re.search("jQuery11(.*)_(.*)\((.*)\)", str(response))
+            response = zz_response.group(3)
         json_response = json.loads(response)
         res_data = json_response.get("data")
 

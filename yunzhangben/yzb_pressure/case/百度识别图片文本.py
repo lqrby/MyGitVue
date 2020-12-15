@@ -1,3 +1,10 @@
+'''
+version: V2.0
+Author: 学海无涯任我游
+Date: 2020-11-30 10:46:36
+LastEditors: 学海无涯任我游
+LastEditTime: 2020-12-14 10:05:09
+'''
 from aip import AipOcr
 
 
@@ -21,4 +28,4 @@ def baiduOCR(picfile):  # picfile:图片文件名
 
 
 if __name__ == '__main__':
-    baiduOCR('E:/picture/6.png')
+    baiduOCR('E:/picture/16.png')
