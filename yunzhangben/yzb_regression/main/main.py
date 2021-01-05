@@ -1,3 +1,10 @@
+'''
+version: V2.0
+Author: 学海无涯任我游
+Date: 2020-11-30 10:46:36
+LastEditors: 学海无涯任我游
+LastEditTime: 2020-12-21 14:18:56
+'''
 import sys
 sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunzhangben/yzb_regression")
 from case.class_api_test import ZFAclassTestCase
@@ -5,6 +12,7 @@ from case.class_api_test import ZFAclassTestCase
 if __name__ == "__main__":
     app = ZFAclassTestCase()
     app.runAllCase("云账本","yzb_test_host")
+    # app.runAllCase("云账本","yzb_release_host")
 
 
 # { "access_token":"", "ask_id":"",  "timestamp":"",  "sign":"" }

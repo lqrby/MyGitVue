@@ -37,7 +37,7 @@ class ZFAclassTestCase(TaskSet):
         """
         根据app和key加载配置
         """
-        print("loadConfigByAppAndKey================",app_name,dict_key)
+        print("loadConfigByAppAndKey")
         my_db = MysqlDb()
         sql = "select * from `testcaseapp_config` where name='{0}' and dict_key='{1}'".format(app_name,dict_key)
         # print("sql===",sql)
@@ -117,7 +117,7 @@ class ZFAclassTestCase(TaskSet):
         req_url = case["url"]
         #是否有前置条件
         if case.get("pre_case_id") > -1:
-            print("需要前置用例返回值")
+            # print("需要前置用例返回值")
             json_data = {}
             if case.get("pre_case_id") == 5:
                json_data = loginData
@@ -340,7 +340,6 @@ class ZFAclassTestCase(TaskSet):
         print("用户账号:",str(mobile))
         #是否有前置条件
         if case.get("pre_case_id") > -1:
-            print("需要前置用例返回值")
             json_data = last_response.get("data")
             result = {}
             #根据前用例的断言方式确定返回值的格式
@@ -401,9 +400,9 @@ class ZFAclassTestCase(TaskSet):
         req_urlName = case["title"] + case["url"]
         content_type = headers.get("content-type")
         req = LocustRequestUtil(self)
-        # print("headers=====",headers)
-        # print("req_url=====",req_url)
-        # print("request_data=====",request_data)
+        print("headers=====",headers)
+        print("req_url=====",req_url)
+        print("request_data=====",request_data)
         response_text = req.requestMethod(case, req_url, req_urlName, method,headers=headers,param=request_data, content_type=content_type)
         return response_text    
             

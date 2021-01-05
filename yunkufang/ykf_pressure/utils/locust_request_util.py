@@ -12,7 +12,7 @@ class LocustRequestUtil(TaskSet):
         通用请求工具类
         """
         try:
-            print("requestMethod")
+            # print("requestMethod")
             if method == "get":
                 with self.client.get(url, name=urlName+url, params = param, headers=headers, verify=False, allow_redirects=False, catch_response=True) as response:
                     if "200" in str(response):
@@ -31,7 +31,6 @@ class LocustRequestUtil(TaskSet):
                         return False
             elif method == "post":
                 if content_type == "application/x-www-form-urlencoded":
-                    print("content_type=============================================================================================================",content_type)
                     with self.client.post(url, data = param, headers=headers, name=urlName+url, verify=False, allow_redirects=False, catch_response=True) as response:
                         if "200" in str(response):
                             response.encoding = "utf-8"
@@ -124,7 +123,6 @@ class LocustRequestUtil(TaskSet):
             assert_msg = {'is_pass':is_pass,'msg':msg}
             return assert_msg
         assert_type = case["assert_type"]
-        print("1111111111111111111111",response)
         expect_result = json.loads(case["expect_result"])
         res_data = response.get("data")
         mark = False
@@ -139,27 +137,27 @@ class LocustRequestUtil(TaskSet):
                 if res_data.get("token"):
                     self.token = res_data.get("token")
                 is_pass = True
-                print("测试用例通过1")
+                # print("测试用例通过1")
                 # 判断列表数组长度
             elif assert_type == "data_list":
                 data_array = res_data.get("list")
                 if data_array is not None and isinstance(data_array,list) and len(data_array) >= 0:
                     is_pass = True
-                    print("测试用例通过2")
+                    # print("测试用例通过2")
                 else:
                     is_pass = False
                     print("测试用例不通过data-list")
             elif assert_type == "data_array":
                 if res_data is not None and len(res_data) >= 0:
                     is_pass = True
-                    print("测试用例通过3")
+                    # print("测试用例通过3")
                 else:
                     is_pass = False
                     print("测试用例不通过data_array")
             elif assert_type == "data_json":
                 if res_data is not None and isinstance(res_data, dict) and len(res_data) > int(expect_result):
                     is_pass = True
-                    print("测试用例通过4")
+                    # print("测试用例通过4")
                 else:
                     is_pass = False
                     print("测试用例不通过data_json")
@@ -167,7 +165,7 @@ class LocustRequestUtil(TaskSet):
                 data_array = res_data.get("item")
                 if data_array is not None and isinstance(data_array,list) and len(data_array) >= 0:
                     is_pass = True
-                    print("测试用例通过5")
+                    # print("测试用例通过5")
                 else:
                     is_pass = False
                     print("测试用例不通过data-item")

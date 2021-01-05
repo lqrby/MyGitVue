@@ -1,3 +1,10 @@
+'''
+version: V2.0
+Author: 学海无涯任我游
+Date: 2020-11-30 10:46:38
+LastEditors: 学海无涯任我游
+LastEditTime: 2021-01-05 16:35:04
+'''
 """ZFATestFrame URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -23,7 +30,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
  
-from . import views
+# from . import views
  
 urlpatterns = [
     path('admin/', admin.site.urls),

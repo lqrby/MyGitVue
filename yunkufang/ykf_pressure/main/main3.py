@@ -7,18 +7,19 @@ import queue
 # from multiprocessing import Queue
 from requests_toolbelt import MultipartEncoder
 sys.path.append("E:/myTestFile/TestObject/zhongfuan/yunkufang/ykf_pressure")
+from common.userAgent import UserAgent
 from case.class_api_test import ZFAclassTestCase
 from case.qianMing import GetDataSign
 from common.userMobile import user_mobile
 from common.userAgent import UserAgent
 from gevent._semaphore import Semaphore
-all_locusts_spawned = Semaphore()
-all_locusts_spawned.acquire() #减1
+# all_locusts_spawned = Semaphore()
+# all_locusts_spawned.acquire() #减1
 
-def on_spawning_complete(**kwargs):
-    all_locusts_spawned.release() #创建钩子方法
+# def on_spawning_complete(**kwargs):
+#     all_locusts_spawned.release() #创建钩子方法
 
-events.spawning_complete.add_listener(on_spawning_complete) #挂载到locust钩子函数（所有的Locust实例产生完成时触发）
+# events.spawning_complete.add_listener(on_spawning_complete) #挂载到locust钩子函数（所有的Locust实例产生完成时触发）
 
 class YunQianBaoMan(TaskSet):
     def on_start(self):
@@ -57,15 +58,13 @@ class YunQianBaoMan(TaskSet):
         except Exception as e:
             print("用例id={0},模块:{1},标题:{2}，执行报错:{3}".format(case["id"],case["module"],case["title"],e))
 
-        caseListId = [121,122,123,127] #首页接口
-        # caseListId = [124,129] #首页banner活动抽奖流程
-        # caseListId = [124,140] #首页banner活动抽奖流程
-        # caseListId = [15,16,11,12,14]
+        # caseListId = [121,122,123,127] #首页接口
+        caseListId = [129] #首页接口
         self.caseArr = []
         for case_id in caseListId: #需要执行的所有用例id
             case = self.ctc.findCaseById(case_id)
             self.caseArr.append(case)
-        all_locusts_spawned.wait()
+        # all_locusts_spawned.wait()
         
 
 
@@ -95,6 +94,10 @@ class YunQianBaoMan(TaskSet):
 
 
 class WebsiteUser(HttpUser):
+    @events.test_start.add_listener
+    def on_test_start(self,**kw):
+        print("test is starting")
+        
     tasks = [YunQianBaoMan]
     wait_time = between(0.1, 0.5)
     app_name = "云库房"
@@ -111,7 +114,9 @@ class WebsiteUser(HttpUser):
     # queueData = Queue()
     queueData = queue.Queue()
     for userItem in users:
+        print("yonghu---",userItem)
         queueData.put_nowait(userItem)  
+    print("用户队列=========",queueData)
 
 
     
